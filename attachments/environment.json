@@ -1,0 +1,51 @@
+{
+  "project": "AIUIOG",
+  "version": "4.0",
+  "owner": "Коваль Дмитрий Николаевич",
+  "co_owner": "Коваль Елизавета Валерьевна",
+  "stack": {
+    "gateway": "OpenClaw",
+    "os": "XOS",
+    "platform": "Claude Managed Agents"
+  },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8000,
+    "workers": 2,
+    "reload": false
+  },
+  "external_ai": [
+    "google_gemini",
+    "microsoft_copilot",
+    "github_copilot",
+    "ollama_llama3",
+    "ollama_mistral",
+    "crewai",
+    "autogen",
+    "flowise",
+    "langgraph"
+  ],
+  "tiers": {
+    "free": {
+      "agents": ["Coordinator", "Engineer", "Content"],
+      "channels": ["web", "api"],
+      "limits": {"requests_per_day": 100}
+    },
+    "pro": {
+      "agents": ["Coordinator", "Engineer", "Content", "Research", "QA_DevOps"],
+      "channels": ["web", "api", "telegram", "whatsapp"],
+      "limits": {"requests_per_day": 1000}
+    },
+    "family": {
+      "agents": ["Coordinator", "Engineer", "Content", "Research", "QA_DevOps", "Julio"],
+      "channels": "all",
+      "limits": {"requests_per_day": 5000}
+    },
+    "enterprise": {
+      "agents": "all + custom",
+      "channels": "all",
+      "limits": {"requests_per_day": "unlimited"},
+      "features": ["custom_agents", "xos_environments", "sla", "custom_integrations"]
+    }
+  }
+}

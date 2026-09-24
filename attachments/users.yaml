@@ -1,0 +1,12 @@
+users:
+  - id: owner
+    name: "Коваль Дмитрий Николаевич"
+    role: owner
+    tier: family
+    permissions: [all]
+
+  - id: co_owner
+    name: "Коваль Елизавета Валерьевна"
+    role: co_owner
+    tier: family
+    permissions: [all]

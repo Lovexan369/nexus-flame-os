@@ -1,0 +1,77 @@
+{
+  "name": "OpenClaw",
+  "version": "1.0",
+  "project": "AIUIOG-v4.0",
+  "backend_url": "http://localhost:8000",
+  "channels": {
+    "web": {
+      "enabled": true,
+      "path": "/"
+    },
+    "api": {
+      "enabled": true,
+      "path": "/chat"
+    },
+    "telegram": {
+      "enabled": true,
+      "token": "${TELEGRAM_BOT_TOKEN}"
+    },
+    "whatsapp": {
+      "enabled": false,
+      "token": "${WHATSAPP_TOKEN}"
+    },
+    "slack": {
+      "enabled": false,
+      "token": "${SLACK_BOT_TOKEN}"
+    },
+    "discord": {
+      "enabled": false,
+      "token": "${DISCORD_BOT_TOKEN}"
+    }
+  },
+  "routing": {
+    "default_agent": "Coordinator",
+    "agent_keywords": {
+      "Engineer": [
+        "код",
+        "деплой",
+        "баг",
+        "ci",
+        "cd",
+        "github",
+        "docker"
+      ],
+      "Content": [
+        "текст",
+        "статья",
+        "пост",
+        "контент",
+        "пиши"
+      ],
+      "Research": [
+        "анализ",
+        "исследование",
+        "данные",
+        "отчёт"
+      ],
+      "QA_DevOps": [
+        "тест",
+        "ошибка",
+        "мониторинг",
+        "качество"
+      ],
+      "Julio": [
+        "совет",
+        "стратегия",
+        "ментор",
+        "помоги"
+      ]
+    }
+  },
+  "security": {
+    "rate_limit": 60,
+    "cors_origins": [
+      "*"
+    ]
+  }
+}

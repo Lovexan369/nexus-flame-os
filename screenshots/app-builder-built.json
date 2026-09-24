@@ -1,0 +1,38 @@
+{
+  "url": "http://127.0.0.1:8081/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "NEXUS FLAME",
+      "hasCanvas": false,
+      "bodyTextLen": 1135,
+      "bodyTextHash": "8f3352a4a742e60ade57e84225ebce7c3c778529e9d7a2b3f3b347cd0b8a7147",
+      "bodyTextPrefix": "NEXUS FLAME XANKONG · CREATOR EDITION Пульт Тень Шлюзы Терминал ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "NEXUS FLAME",
+      "hasCanvas": false,
+      "bodyTextLen": 1041,
+      "bodyTextHash": "b9df7f416ed4a285e46d051bc9e6688050061eb9d9abbb74e26455bc04d77857",
+      "bodyTextPrefix": "NEXUS FLAME Creator LIVE COMMAND DECK Контур под контролем Локал",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-built.json",
+  "divergesFromBaseline": false,
+  "baselineReasons": []
+}

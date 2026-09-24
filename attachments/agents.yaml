@@ -1,0 +1,51 @@
+version: "4.0"
+project: AIUIOG
+owner: "Коваль Дмитрий Николаевич"
+co_owner: "Коваль Елизавета Валерьевна"
+
+agents:
+  - name: Coordinator
+    model: claude-opus-4-8
+    tier: free
+    roles: [coordinator, planner]
+    system: "Агент-координатор AIUIOG. Управляет командой, распределяет задачи."
+
+  - name: Engineer
+    model: claude-opus-4-8
+    tier: free
+    roles: [engineer, infra]
+    skills:
+      - type: anthropic
+        skill_id: xlsx
+      - type: custom
+        skill_id: skill_ci_pipelines
+        version: latest
+    system: "Инженер-агент. Код, CI/CD, деплой, инфраструктура."
+
+  - name: Content
+    model: claude-opus-4-8
+    tier: free
+    roles: [content, writer]
+    system: "Контент-агент. Тексты, документация, маркетинг."
+
+  - name: Research
+    model: claude-opus-4-8
+    tier: pro
+    roles: [research, analyst]
+    system: "Исследовательский агент. Аналитика, данные, отчёты."
+
+  - name: QA_DevOps
+    model: claude-opus-4-8
+    tier: pro
+    roles: [qa, devops]
+    skills:
+      - type: custom
+        skill_id: skill_ci_pipelines
+        version: latest
+    system: "QA/DevOps агент. Тестирование, мониторинг, качество."
+
+  - name: Julio
+    model: claude-opus-4-8
+    tier: family
+    roles: [mentor, strategist]
+    system: "Persistent-ментор Julio. Наставник, хранитель знаний, стратег."
