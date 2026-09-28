@@ -1,7 +1,10 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import type { LucideIcon } from "lucide-react";
 import {
   Bot,
+  Briefcase,
   Gauge,
+  Inbox,
   Layers,
   MessageSquare,
   Settings,
@@ -18,14 +21,16 @@ import { cn } from "@/lib/utils";
 
 const PRIMARY = [
   { to: "/", label: "Пульт", icon: Gauge },
-  { to: "/messenger", label: "Тень", icon: MessageSquare },
-  { to: "/gates", label: "Шлюзы", icon: Shield },
+  { to: "/desk", label: "Стол", icon: Briefcase },
+  { to: "/leads", label: "Лиды", icon: Inbox },
   { to: "/terminal", label: "Терминал", icon: Terminal },
 ] as const;
 
 const MORE = [
-  { to: "/plans", label: "Тарифы", icon: Layers },
+  { to: "/messenger", label: "Тень", icon: MessageSquare },
+  { to: "/gates", label: "Шлюзы", icon: Shield },
   { to: "/agents", label: "Агенты", icon: Bot },
+  { to: "/plans", label: "Тарифы", icon: Layers },
   { to: "/settings", label: "Настройки", icon: Settings },
 ] as const;
 
@@ -45,6 +50,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const creatorMode = useFlame((s) => s.creatorMode);
   const pending = useFlame(
     (s) => s.approvals.filter((a) => a.status === "approval_required").length,
+  );
+  const hotLeads = useFlame(
+    (s) => s.leads.filter((l) => l.temperature === "Горячий" && !l.converted).length,
   );
   const purgeExpired = useFlame((s) => s.purgeExpired);
   const [more, setMore] = useState(false);
@@ -96,13 +104,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               key={item.to}
               {...item}
               active={pathname === item.to}
-              badge={item.to === "/gates" && pending ? pending : undefined}
+              badge={
+                item.to === "/gates"
+                  ? pending || undefined
+                  : item.to === "/leads"
+                    ? hotLeads || undefined
+                    : undefined
+              }
             />
           ))}
         </nav>
         <div className="px-5 py-4">
           <p className="font-mono text-xs tabular-nums text-subtle">{clock}</p>
-          <p className="mt-1 text-xs text-muted">local_draft_only</p>
+          <p className="mt-1 text-xs text-muted">online · gates blocked</p>
         </div>
       </aside>
 
@@ -155,7 +169,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             >
               <item.icon className="size-4" strokeWidth={1.6} />
               {item.label}
-              {item.to === "/gates" && pending > 0 ? (
+              {item.to === "/leads" && hotLeads > 0 ? (
                 <span className="absolute top-1.5 right-4 size-1.5 rounded-full bg-accent" />
               ) : null}
             </Link>
@@ -222,7 +236,7 @@ function NavLink({
 }: {
   to: string;
   label: string;
-  icon: typeof Gauge;
+  icon: LucideIcon;
   active: boolean;
   badge?: number;
 }) {

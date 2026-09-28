@@ -12,7 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ConsoleRouteImport } from './routes/_console'
 import { Route as ConsoleIndexRouteImport } from './routes/_console/index'
 import { Route as ConsoleAgentsRouteImport } from './routes/_console/agents'
+import { Route as ConsoleDeskRouteImport } from './routes/_console/desk'
 import { Route as ConsoleGatesRouteImport } from './routes/_console/gates'
+import { Route as ConsoleLeadsRouteImport } from './routes/_console/leads'
 import { Route as ConsoleMessengerRouteImport } from './routes/_console/messenger'
 import { Route as ConsolePlansRouteImport } from './routes/_console/plans'
 import { Route as ConsoleSettingsRouteImport } from './routes/_console/settings'
@@ -32,9 +34,19 @@ const ConsoleAgentsRoute = ConsoleAgentsRouteImport.update({
   path: '/agents',
   getParentRoute: () => ConsoleRoute,
 } as any)
+const ConsoleDeskRoute = ConsoleDeskRouteImport.update({
+  id: '/desk',
+  path: '/desk',
+  getParentRoute: () => ConsoleRoute,
+} as any)
 const ConsoleGatesRoute = ConsoleGatesRouteImport.update({
   id: '/gates',
   path: '/gates',
+  getParentRoute: () => ConsoleRoute,
+} as any)
+const ConsoleLeadsRoute = ConsoleLeadsRouteImport.update({
+  id: '/leads',
+  path: '/leads',
   getParentRoute: () => ConsoleRoute,
 } as any)
 const ConsoleMessengerRoute = ConsoleMessengerRouteImport.update({
@@ -61,7 +73,9 @@ const ConsoleTerminalRoute = ConsoleTerminalRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof ConsoleIndexRoute
   '/agents': typeof ConsoleAgentsRoute
+  '/desk': typeof ConsoleDeskRoute
   '/gates': typeof ConsoleGatesRoute
+  '/leads': typeof ConsoleLeadsRoute
   '/messenger': typeof ConsoleMessengerRoute
   '/plans': typeof ConsolePlansRoute
   '/settings': typeof ConsoleSettingsRoute
@@ -69,7 +83,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/agents': typeof ConsoleAgentsRoute
+  '/desk': typeof ConsoleDeskRoute
   '/gates': typeof ConsoleGatesRoute
+  '/leads': typeof ConsoleLeadsRoute
   '/messenger': typeof ConsoleMessengerRoute
   '/plans': typeof ConsolePlansRoute
   '/settings': typeof ConsoleSettingsRoute
@@ -80,7 +96,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_console': typeof ConsoleRouteWithChildren
   '/_console/agents': typeof ConsoleAgentsRoute
+  '/_console/desk': typeof ConsoleDeskRoute
   '/_console/gates': typeof ConsoleGatesRoute
+  '/_console/leads': typeof ConsoleLeadsRoute
   '/_console/messenger': typeof ConsoleMessengerRoute
   '/_console/plans': typeof ConsolePlansRoute
   '/_console/settings': typeof ConsoleSettingsRoute
@@ -92,7 +110,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/agents'
+    | '/desk'
     | '/gates'
+    | '/leads'
     | '/messenger'
     | '/plans'
     | '/settings'
@@ -100,7 +120,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/agents'
+    | '/desk'
     | '/gates'
+    | '/leads'
     | '/messenger'
     | '/plans'
     | '/settings'
@@ -110,7 +132,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_console'
     | '/_console/agents'
+    | '/_console/desk'
     | '/_console/gates'
+    | '/_console/leads'
     | '/_console/messenger'
     | '/_console/plans'
     | '/_console/settings'
@@ -145,11 +169,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConsoleAgentsRouteImport
       parentRoute: typeof ConsoleRoute
     }
+    '/_console/desk': {
+      id: '/_console/desk'
+      path: '/desk'
+      fullPath: '/desk'
+      preLoaderRoute: typeof ConsoleDeskRouteImport
+      parentRoute: typeof ConsoleRoute
+    }
     '/_console/gates': {
       id: '/_console/gates'
       path: '/gates'
       fullPath: '/gates'
       preLoaderRoute: typeof ConsoleGatesRouteImport
+      parentRoute: typeof ConsoleRoute
+    }
+    '/_console/leads': {
+      id: '/_console/leads'
+      path: '/leads'
+      fullPath: '/leads'
+      preLoaderRoute: typeof ConsoleLeadsRouteImport
       parentRoute: typeof ConsoleRoute
     }
     '/_console/messenger': {
@@ -185,7 +223,9 @@ declare module '@tanstack/react-router' {
 
 interface ConsoleRouteChildren {
   ConsoleAgentsRoute: typeof ConsoleAgentsRoute
+  ConsoleDeskRoute: typeof ConsoleDeskRoute
   ConsoleGatesRoute: typeof ConsoleGatesRoute
+  ConsoleLeadsRoute: typeof ConsoleLeadsRoute
   ConsoleMessengerRoute: typeof ConsoleMessengerRoute
   ConsolePlansRoute: typeof ConsolePlansRoute
   ConsoleSettingsRoute: typeof ConsoleSettingsRoute
@@ -195,7 +235,9 @@ interface ConsoleRouteChildren {
 
 const ConsoleRouteChildren: ConsoleRouteChildren = {
   ConsoleAgentsRoute: ConsoleAgentsRoute,
+  ConsoleDeskRoute: ConsoleDeskRoute,
   ConsoleGatesRoute: ConsoleGatesRoute,
+  ConsoleLeadsRoute: ConsoleLeadsRoute,
   ConsoleMessengerRoute: ConsoleMessengerRoute,
   ConsolePlansRoute: ConsolePlansRoute,
   ConsoleSettingsRoute: ConsoleSettingsRoute,

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { AGENTS, GATES, type AgentId, type GateId } from "@/lib/catalog";
+import { AGENTS, GATES, scoreLead, type AgentId, type GateId, type LeadTemp } from "@/lib/catalog";
 import { uid } from "@/lib/utils";
 
 export type ChatMessage = {
@@ -22,8 +22,21 @@ export type Approval = {
 
 export type Activity = {
   id: string;
-  kind: "gate" | "message" | "terminal" | "system";
+  kind: "gate" | "message" | "terminal" | "system" | "lead";
   text: string;
+  at: number;
+};
+
+export type Lead = {
+  id: string;
+  name: string;
+  contact: string;
+  service: string;
+  comment: string;
+  action: string;
+  temperature: LeadTemp;
+  probability: number;
+  converted: boolean;
   at: number;
 };
 
@@ -45,6 +58,7 @@ type State = {
   thread: TerminalTurn[];
   agent: AgentId;
   startedAt: number;
+  leads: Lead[];
   setHydrated: () => void;
   setCreatorMode: (value: boolean) => void;
   unlockOperator: () => void;
@@ -56,6 +70,14 @@ type State = {
   resolveGate: (id: string, status: "approved_local" | "denied") => void;
   setAgent: (id: AgentId) => void;
   pushTerminal: (turn: Omit<TerminalTurn, "id" | "at">) => void;
+  addLead: (input: {
+    name: string;
+    contact: string;
+    service: string;
+    comment: string;
+    action: string;
+  }) => Lead;
+  convertLead: (id: string) => void;
   log: (kind: Activity["kind"], text: string) => void;
 };
 
@@ -89,6 +111,7 @@ export const useFlame = create<State>()(
       thread: [],
       agent: "Coordinator",
       startedAt: Date.now(),
+      leads: [],
       setHydrated: () => set({ hydrated: true }),
       setCreatorMode: (value) => {
         set({ creatorMode: value });
@@ -182,6 +205,33 @@ export const useFlame = create<State>()(
           get().log("terminal", `Запрос → ${agent?.id ?? "agent"}`);
         }
       },
+      addLead: (input) => {
+        const scored = scoreLead(input.action, `${input.service} ${input.comment}`);
+        const lead: Lead = {
+          id: uid(),
+          name: input.name.trim() || "без имени",
+          contact: input.contact.trim(),
+          service: input.service,
+          comment: input.comment.trim(),
+          action: input.action,
+          temperature: scored.temperature,
+          probability: scored.probability,
+          converted: false,
+          at: Date.now(),
+        };
+        set((s) => ({ leads: [lead, ...s.leads] }));
+        get().log(
+          "lead",
+          `${lead.temperature} лид · ${lead.service || "заявка"} · ${(lead.probability * 100).toFixed(0)}%`,
+        );
+        return lead;
+      },
+      convertLead: (id) => {
+        set((s) => ({
+          leads: s.leads.map((l) => (l.id === id ? { ...l, converted: true } : l)),
+        }));
+        get().log("lead", "Лид отмечен как сделка");
+      },
       log: (kind, text) => {
         const row: Activity = { id: uid(), kind, text, at: Date.now() };
         set((s) => ({ activity: prune([row, ...s.activity], 48) }));
@@ -199,6 +249,7 @@ export const useFlame = create<State>()(
         thread: s.thread,
         agent: s.agent,
         startedAt: s.startedAt,
+        leads: s.leads,
       }),
     },
   ),

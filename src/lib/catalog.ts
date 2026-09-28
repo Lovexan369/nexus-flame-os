@@ -204,3 +204,53 @@ export const MCP_TOOLS = [
   { name: "xankong_get_approval_requirements", mode: "read_only" },
   { name: "xankong_request_external_action", mode: "approval_only" },
 ] as const;
+
+export type LeadTemp = "Холодный" | "Тёплый" | "Горячий";
+
+export const SERVICES: {
+  id: string;
+  name: string;
+  price: string;
+  group: string;
+}[] = [
+  { id: "bot-simple", name: "Простой бот", price: "5 000 ₽", group: "Боты" },
+  { id: "bot-db", name: "Бот с базой", price: "15 000 ₽", group: "Боты" },
+  { id: "bot-ai", name: "Бот с AI", price: "30 000 ₽", group: "Боты" },
+  { id: "landing", name: "Landing", price: "15 000 ₽", group: "Веб" },
+  { id: "corp", name: "Корпоративный сайт", price: "40 000 ₽", group: "Веб" },
+  { id: "shop", name: "Интернет-магазин", price: "80 000 ₽", group: "Веб" },
+  { id: "mobile", name: "Мобильное приложение", price: "от 100 000 ₽", group: "Мобильные" },
+  { id: "api", name: "API / Backend", price: "от 20 000 ₽", group: "Backend" },
+];
+
+export const CHANNELS: {
+  id: string;
+  name: string;
+  enabled: boolean;
+  note: string;
+}[] = [
+  { id: "web", name: "Web", enabled: true, note: "этот контур" },
+  { id: "api", name: "API", enabled: true, note: "терминал / серверные функции" },
+  {
+    id: "telegram",
+    name: "Telegram",
+    enabled: false,
+    note: "нужен BOT_TOKEN — не запускается из браузера",
+  },
+  { id: "whatsapp", name: "WhatsApp", enabled: false, note: "выключен" },
+  { id: "slack", name: "Slack", enabled: false, note: "выключен" },
+  { id: "discord", name: "Discord", enabled: false, note: "выключен" },
+];
+
+const HOT = ["order", "consultation", "заказать", "сколько стоит", "сделай", "хочу"];
+const WARM = ["цена", "цены", "портфолио", "отзывы", "примеры"];
+
+export function scoreLead(action: string, text: string) {
+  const combined = `${action} ${text}`.toLowerCase();
+  let temperature: LeadTemp = "Холодный";
+  if (HOT.some((k) => combined.includes(k))) temperature = "Горячий";
+  else if (WARM.some((k) => combined.includes(k))) temperature = "Тёплый";
+  const probability =
+    temperature === "Горячий" ? 0.74 : temperature === "Тёплый" ? 0.41 : 0.14;
+  return { temperature, probability };
+}

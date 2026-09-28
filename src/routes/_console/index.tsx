@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowUpRight, Lock, Radio, Shield } from "lucide-react";
+import { ArrowUpRight, Briefcase, Inbox, Lock, Radio, Shield } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AGENTS, MCP_TOOLS } from "@/lib/catalog";
+import { AGENTS, CHANNELS, MCP_TOOLS } from "@/lib/catalog";
 import { formatUptime, formatWhen } from "@/lib/format";
 import { useFlame } from "@/lib/store";
 
@@ -17,6 +17,7 @@ function DeckPage() {
   const messages = useFlame((s) => s.messages);
   const approvals = useFlame((s) => s.approvals);
   const activity = useFlame((s) => s.activity);
+  const leads = useFlame((s) => s.leads);
   const startedAt = useFlame((s) => s.startedAt);
   const pending = approvals.filter((a) => a.status === "approval_required").length;
   const [uptime, setUptime] = useState("00:00:00");
@@ -32,23 +33,35 @@ function DeckPage() {
     <div className="mx-auto flex max-w-5xl flex-col gap-8">
       <PageHeader
         kicker="Command deck"
-        title="Контур под контролем"
-        description="Локальный контур NEXUS FLAME. Внешние эффекты не исполняются. Creator Mode держит монетизацию выключенной, пока вы сами её не откроете."
+        title="Один контур, все модули"
+        description="NEXUS FLAME × XANKONG, AIUIOG и LeadPredict собраны здесь. Внешние эффекты по-прежнему только через шлюз. Telegram-бот из этой консоли не крутится."
       />
 
       <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Stat label="Режим" value={creatorMode ? "Creator" : "Paid"} hint="монетизация" />
-        <Stat
-          label="Vault"
-          value={String(messages.length)}
-          hint="сообщений на устройстве"
-        />
+        <Stat label="Лиды" value={String(leads.length)} hint="воронка студии" />
         <Stat label="Шлюзы" value={String(pending)} hint="ждут approval" />
-        <Stat
-          label="Uptime"
-          value={uptime}
-          hint="сессия"
-          mono
+        <Stat label="Uptime" value={uptime} hint="сессия" mono />
+      </section>
+
+      <section className="grid gap-3 md:grid-cols-3">
+        <ModuleCard
+          to="/desk"
+          title="Стол"
+          text="LeadPredict: прайс и заявка."
+          icon={Briefcase}
+        />
+        <ModuleCard
+          to="/leads"
+          title="Воронка"
+          text="Холодный / тёплый / горячий."
+          icon={Inbox}
+        />
+        <ModuleCard
+          to="/agents"
+          title="AIUIOG"
+          text={`${CHANNELS.filter((c) => c.enabled).length} живых канала · ${AGENTS.length} агентов.`}
+          icon={Radio}
         />
       </section>
 
@@ -58,30 +71,30 @@ function DeckPage() {
             <h2 className="text-sm font-medium">Состояние</h2>
             <Badge tone="ok">
               <Radio className="size-3" />
-              local_draft_only
+              gates blocked
             </Badge>
           </div>
           <ul className="space-y-4">
             <StatusRow
               icon={Lock}
               title="Shadow vault"
-              text="Сообщения не покидают устройство. Самоуничтожение по таймеру."
+              text={`${messages.length} сообщений на устройстве.`}
             />
             <StatusRow
               icon={Shield}
               title="XANKONG gates"
-              text="deploy, payment, publish и остальные внешние действия — executable: false."
+              text="deploy, payment, publish — executable: false."
             />
             <StatusRow
-              icon={Radio}
-              title="Терминал"
-              text="Запросы идут в Grok только по вашей команде. Без автозапуска."
+              icon={Inbox}
+              title="LeadPredict"
+              text="Правила температуры, без фальшивой обученной модели."
             />
           </ul>
           <div className="mt-6 flex flex-col gap-2 sm:flex-row">
             <Button asChild>
-              <Link to="/gates">
-                Открыть шлюзы
+              <Link to="/desk">
+                Открыть стол
                 <ArrowUpRight className="size-4" />
               </Link>
             </Button>
@@ -110,52 +123,20 @@ function DeckPage() {
         </article>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-2">
-        <article className="rounded-xl bg-surface p-5 shadow-[var(--shadow-border)] sm:p-6">
-          <h2 className="mb-4 text-sm font-medium">Агенты</h2>
-          <ul className="grid grid-cols-2 gap-2">
-            {AGENTS.map((agent) => (
-              <li
-                key={agent.id}
-                className="rounded-md bg-elevated px-3 py-3 shadow-[var(--shadow-border)]"
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <p className="text-sm">{agent.id}</p>
-                  <span
-                    className={
-                      agent.status === "online"
-                        ? "size-1.5 rounded-full bg-ok"
-                        : "size-1.5 rounded-full bg-warn"
-                    }
-                  />
-                </div>
-                <p className="mt-1 text-xs text-muted">{agent.role}</p>
-              </li>
-            ))}
-          </ul>
-          <Button variant="ghost" className="mt-3 px-0" asChild>
-            <Link to="/agents">
-              Все агенты
-              <ArrowUpRight className="size-4" />
-            </Link>
-          </Button>
-        </article>
-
-        <article className="rounded-xl bg-surface p-5 shadow-[var(--shadow-border)] sm:p-6">
-          <h2 className="mb-4 text-sm font-medium">MCP · draft only</h2>
-          <ul className="space-y-2">
-            {MCP_TOOLS.map((tool) => (
-              <li
-                key={tool.name}
-                className="flex items-center justify-between gap-3 font-mono text-xs"
-              >
-                <span className="truncate text-fg">{tool.name}</span>
-                <span className="shrink-0 text-subtle">{tool.mode}</span>
-              </li>
-            ))}
-          </ul>
-        </article>
-      </section>
+      <article className="rounded-xl bg-surface p-5 shadow-[var(--shadow-border)] sm:p-6">
+        <h2 className="mb-4 text-sm font-medium">MCP · draft only</h2>
+        <ul className="grid gap-2 sm:grid-cols-2">
+          {MCP_TOOLS.map((tool) => (
+            <li
+              key={tool.name}
+              className="flex items-center justify-between gap-3 font-mono text-xs"
+            >
+              <span className="truncate text-fg">{tool.name}</span>
+              <span className="shrink-0 text-subtle">{tool.mode}</span>
+            </li>
+          ))}
+        </ul>
+      </article>
     </div>
   );
 }
@@ -207,5 +188,28 @@ function StatusRow({
         <p className="text-sm text-muted">{text}</p>
       </div>
     </li>
+  );
+}
+
+function ModuleCard({
+  to,
+  title,
+  text,
+  icon: Icon,
+}: {
+  to: "/desk" | "/leads" | "/agents";
+  title: string;
+  text: string;
+  icon: typeof Briefcase;
+}) {
+  return (
+    <Link
+      to={to}
+      className="rounded-xl bg-surface p-5 shadow-[var(--shadow-border)] transition-[box-shadow] duration-150 hover:shadow-[var(--shadow-border-hover)]"
+    >
+      <Icon className="size-4 text-accent" strokeWidth={1.6} />
+      <p className="mt-3 text-sm font-medium">{title}</p>
+      <p className="mt-1 text-sm text-muted">{text}</p>
+    </Link>
   );
 }
